@@ -38,12 +38,12 @@ def check_proxy(url, head, con, cour):
         proxy = {"http": s}
         try:
             req = requests.get(url=url, headers=head, proxies=proxy,timeout=3)
-        except requests.exceptions.RequestException:
-            continue
-        if req.status_code == 200:
-            value = ("http", str(ip), int(port),1)
-            cour.execute('INSERT into proxyspool values(%s,%s,%s,%s)',value)
-            con.commit()
+            if req.status_code == 200:
+                value = ("http", str(ip), int(port),1)
+                cour.execute('INSERT into proxyspool values(%s,%s,%s,%s)',value)
+                con.commit()
+        except Exception:
+            pass
 
 url = "http://www.xicidaili.com/nn/"
 head = { 
