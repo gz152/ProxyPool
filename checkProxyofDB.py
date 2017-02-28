@@ -27,13 +27,14 @@ def check_proxy(url, head, con, cour):
         s = "http://" + str(ip) + ":" + str(port)
         proxy = {"http": s}
         try:
-            req = requests.get(url=url, headers=head, proxies=proxy,timeout=3)
+            req = requests.get(url=url, headers=head, proxies=proxy,timeout=20)
             if req.status_code == 200 and fg == 0:
                 cour.execute('update proxyspool SET flag = %s WHERE ip = "%s"' %(1,ip))
                 con.commit()
         except requests.exceptions.RequestException:
-            cour.execute('update proxyspool SET flag = %s WHERE ip = "%s"' %(0,ip))
-            con.commit()
+            if fg == 1:
+                cour.execute('update proxyspool SET flag = %s WHERE ip = "%s"' %(0,ip))
+                con.commit()
         except mdb.Error as e:
             print e
 
