@@ -42,6 +42,7 @@ def check_proxy(url, head, con, cour):
                 value = ("http", str(ip), int(port),1)
                 cour.execute('INSERT into proxyspool values(%s,%s,%s,%s)',value)
                 con.commit()
+                #将数据库的插入异常纳入监控,防止插入时的主键冲突导致for循环终止.
         except Exception:
             pass
 
