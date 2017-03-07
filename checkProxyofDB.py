@@ -38,12 +38,10 @@ def check_proxy(url, head, con, cour):
         except mdb.Error as e:
             print e
 
-url = "http://www.xicidaili.com"
+url = "http://www.meituan.com"
 head = {
-    'Host': "www.xicidaili.com",
-    'Referer': "http://www.xicidaili.com/nn/",
-    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
-    'Connection': 'keep-alive'
+    'Host': "www.meituan.com",
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
 }
 
 if __name__ == '__main__':
