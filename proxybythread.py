@@ -24,7 +24,7 @@ def checkproxy(ip, port, flag):
     s = "http://" + str(ip) + ":" + str(port)
     proxy = {"http": s}
     try:
-        req = requests.get(url, head, proxies=proxy, timeout=30)
+        req = requests.get(url, head, proxies=proxy, timeout=5)
         if req.status_code == 200 and flag == 0:
             cour.execute('update proxyspool SET flag = %s WHERE ip = "%s"' % (1, ip))
             conn.commit()
