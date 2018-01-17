@@ -1,13 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # coding=utf-8
 
-import Queue
+import queue
 import pymysql as mdb
-import requests
 from threading import Thread
 import time
+import checkProxyof
 
-queueproxy = Queue.Queue(24)
+queueproxy = queue.Queue(24)
 goodproxyip = []
 badproxyip = []
 config = {
@@ -43,10 +43,8 @@ class CheckProxy(Thread):
 
     """docstring for CheckProxy"""
 
-    def __init__(self, url, head):
+    def __init__(self):
         super(CheckProxy, self).__init__()
-        self.url = url
-        self.head = head
 
     def run(self):
         global queueproxy
@@ -57,39 +55,25 @@ class CheckProxy(Thread):
             if res is None:
                 break
             protoc, ip, port, flag = res
-            s = ''.join((str(protoc), "://", str(ip), ":", str(port)))
-            proxy = {protoc: s}
 
-            try:
-                req = requests.get(
-                    self.url, self.head, proxies=proxy, timeout=3)
-                if req.status_code != 200 and flag == 1:
-                    badproxyip.append(ip)
-                elif req.status_code == 200 and flag == 0:
-                    goodproxyip.append(ip)
-            except requests.exceptions.RequestException:
-                if flag == 1:
-                    badproxyip.append(ip)
+            statuscode = checkProxyof.checkproxy(protoc, ip, port)
+            if statuscode != 200 and flag == 1:
+                badproxyip.append(ip)
+            elif statuscode == 200 and flag == 0:
+                goodproxyip.append(ip)
 
 if __name__ == '__main__':
     conn = mdb.connect(**config)
     cursor = conn.cursor()
     cursor.execute("select * from proxyspool")
 
-    url = "http://www.meituan.com"
-    head = {
-        'Host': "www.meituan.com",
-        'User-Agent': "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) \
-         Chrome/56.0.2924.87 Safari/537.36"
-    }
-
     getList = []
     checkList = []
 
-    for i in xrange(12):
+    for i in range(12):
         get = GetProxyinDB(cursor)
         getList.append(get)
-        check = CheckProxy(url, head)
+        check = CheckProxy()
         checkList.append(check)
 
     for i, j in zip(getList, checkList):
